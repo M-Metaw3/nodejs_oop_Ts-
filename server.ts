@@ -1,7 +1,10 @@
-import app from "./app";
 
-const port =  3000;
+import http from 'http';
+import app from './src/app'; // Import your Express app
+const PORT = process.env.PORT || 3000; // Set the port from environment variables or default to 3000
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const server = http.createServer(app);
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
