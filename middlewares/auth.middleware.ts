@@ -5,13 +5,18 @@ import jsonwebtoken from "jsonwebtoken";
 import User from "../models/user.model";
 import Product from "../models/product.model";
 
-import UserToken from "../models/user_token.model";
+import {UserToken} from "../models/user_token.model";
 
 // Import jwt config from config folder
 import jwtConfig from "../config/jwt.config";
 
 // Import response format from utils folder
 import responseFormat from "../utils/response.util";
+interface JwtPayload {
+  id: string;
+  role: string;
+  // Add any other properties you expect in the JWT payload
+}
 
 // Define the verify token function that takes a request, a response and a next function as input and verifies the token in the request header
 const verifyToken = async (req: any, res: any, next: any) => {
@@ -25,13 +30,16 @@ const verifyToken = async (req: any, res: any, next: any) => {
     }
 
     // Verify the token using jsonwebtoken with the secret key
-    const decoded = jsonwebtoken.verify(token, jwtConfig.secret);
+    const decoded = jsonwebtoken.verify(token, jwtConfig.secret)as JwtPayload;
 
     // If the token is not valid, throw an error
     if (!decoded) {
       throw new Error("Invalid token");
     }
 
+
+
+    
     // Get the user id and role from the decoded token
     const userId = decoded.id;
     const userRole = decoded.role;
@@ -63,7 +71,7 @@ const verifyToken = async (req: any, res: any, next: any) => {
 
     // Call the next function to proceed to the next middleware or controller
     next();
-  } catch (error) {
+  } catch (error:any) {
     // If there is an error, send a formatted response with status code 401 and error message
     res.status(401).send(responseFormat(401, error.message));
   }
@@ -84,7 +92,7 @@ const checkUserRole = (role: string) => {
 
       // Call the next function to proceed to the next middleware or controller
       next();
-    } catch (error) {
+    } catch (error:any) {
       // If there is an error, send a formatted response with status code 403 and error message
       res.status(403).send(responseFormat(403, error.message));
     }
@@ -118,7 +126,7 @@ const checkUserOwnership = async (req: any, res: any, next: any) => {
 
     // Call the next function to proceed to the next middleware or controller
     next();
-  } catch (error) {
+  } catch (error:any) {
      // If there is an error, send a formatted response with status code 403 and error message
      res.status(403).send(responseFormat(403, error.message));
   }
